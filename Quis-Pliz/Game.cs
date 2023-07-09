@@ -108,11 +108,11 @@
                 _ = RepeatActionEvery(() => DisplayTime(ref initial), TimeSpan.FromSeconds(1), cancellation.Token);
                 buttonKey = Reader.ReadLine(30000);
                 Console.Clear();
+                cancellation.Cancel();
                 Console.SetCursorPosition(0, 0);
                 if (buttonKey == date[i].Correct)
                 {
                     _player.Point += 1;
-                    cancellation.Cancel();                
                     Console.WriteLine("Верно");
                 }
                 else if  (buttonKey == "")
@@ -122,7 +122,6 @@
                 else
                 {
                     _player.Point -= 1;
-                    cancellation.Cancel();
                     Console.WriteLine("Не верно");
                 }
                 Thread.Sleep(2000);
@@ -165,6 +164,7 @@
             report.Load(fm);
             Console.Clear();
             Console.WriteLine("Дата игры: " + _player.Date + " Время игры: " + _player.GameTime + " сек Очки: " + _player.Point);
+            Console.ReadKey();
         }
     }
 
