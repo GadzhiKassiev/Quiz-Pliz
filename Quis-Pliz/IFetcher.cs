@@ -8,6 +8,6 @@ namespace Quis_Pliz
 {
     internal interface IFetcher
     {
-        public ReturnedStructure[] fetchDate();
+        public QuizPart[] fetchDate();
     }
 }

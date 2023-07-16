@@ -3,9 +3,12 @@
     internal class Game
     {
         Player _player;
-        ReturnedStructure[] date;
+        QuizPart[] date;
         int Num;
         Reports report;
+        const int reportCount = 4;
+        DateTime timebeginGame;
+
         public Game(IFetcher fetcher , int numbers)
         {
             date = fetcher.fetchDate();
@@ -28,7 +31,6 @@
 
         public void Run()
         {
-            Console.WriteLine(date);
             Shuffle();
             Num = Num > date.Length ? date.Length : Num;
             date = date[0..Num];
@@ -44,7 +46,7 @@
             for (int i = 0; i < date.Length; i++)
             {
                 int r = rnd.Next(0, i+1);
-                ReturnedStructure swap = date[i];
+                QuizPart swap = date[i];
                 date[i] = date[r];
                 date[r] = swap;
             }
@@ -52,15 +54,10 @@
 
         private void Introduce()
         {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            string message = "сыграем в КВИЗ.(Y - Да, R - рейтинг, N - выход)";
-            int width = Console.WindowWidth;
-            int heigth = Console.WindowHeight;
-            int x = (width - message.Length) / 2;
-            int y = heigth / 2;
-            Console.SetCursorPosition(x, y);
-            Console.WriteLine(message);
+            string text = "сыграем в КВИЗ?(Y - Да, R - рейтинг, N - выход)";
+            int x = (Screen.Width - text.Length) / 2;
+            int y = Screen.Height / 2;
+            Screen.DisplayInPosition(() => Screen.Clear(),text, x, y);
         }
 
         private void Menu()
@@ -72,12 +69,13 @@
                 cki = Console.ReadKey();
                 if (cki.Key == ConsoleKey.Y)
                 {
+                    timebeginGame = DateTime.Now;
                     break;
                 }
                 else if (cki.Key == ConsoleKey.R)
                 {
                     Console.Clear();
-                    var orderedNumbers = report.GetData().OrderByDescending(n => n.Number).Take(4);
+                    var orderedNumbers = report.GetData().OrderByDescending(n => n.Number).Take(reportCount);
                     foreach (var number in orderedNumbers)
                     {
                         Console.WriteLine("Очки: " + number.Number + " Время игры: " + number.Time + " секунд Дата игры: " + number.Data);
@@ -97,43 +95,35 @@
             CancellationTokenSource cancellation;
             for (int i = 0; i < date.Length; i++)
             {               
-                Console.Clear();
-                Console.WriteLine(date[i].Question);
-                Console.WriteLine("1 :  " + date[i].Answer[0]);
-                Console.WriteLine("2 :  " + date[i].Answer[1]);
-                Console.WriteLine("3 :  " + date[i].Answer[2]);
-                Console.WriteLine("4 :  " + date[i].Answer[3]);
+                Screen.Display(() => Screen.Clear(), date[i].question, "1 :  " + date[i].answer.A1, "2 :  " + date[i].answer.A2, "3 :  " + date[i].answer.A3, "4 :  " + date[i].answer.A4);
                 initial = 0;
                 cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
                 _ = RepeatActionEvery(() => DisplayTime(ref initial), TimeSpan.FromSeconds(1), cancellation.Token);
                 buttonKey = Reader.ReadLine(30000);
-                Console.Clear();
-                cancellation.Cancel();
-                Console.SetCursorPosition(0, 0);
-                if (buttonKey == date[i].Correct)
+                cancellation.Cancel();              
+                if (buttonKey == date[i].correct)
                 {
                     _player.Point += 1;
-                    Console.WriteLine("Верно");
+                    Screen.DisplayInPosition(() => Screen.Clear(),"Верно", 0, 0);
                 }
                 else if  (buttonKey == "")
                 {
-                    Console.WriteLine("Время на ответ истекло");
+                    Screen.DisplayInPosition(() => Screen.Clear(),"Время на ответ истекло", 0, 0);
                 }
                 else
                 {
                     _player.Point -= 1;
-                    Console.WriteLine("Не верно");
+                    Screen.DisplayInPosition(() => Screen.Clear(),"Не верно", 0, 0);
                 }
                 Thread.Sleep(2000);
             }
             _player.Date = DateTime.Now;
+            _player.GameTime = _player.Date - timebeginGame;
         }
 
         private void DisplayTime(ref int time)
         {
-            Console.SetCursorPosition(Console.WindowWidth/2, Console.WindowHeight/2);
-            Console.Write(time++);
-            _player.GameTime += 1;
+            Screen.DisplayInPosition(null, time++.ToString(), Console.WindowWidth / 2, Console.WindowHeight / 2);
         }
 
         public static async Task RepeatActionEvery(Action action,
@@ -162,9 +152,8 @@
             fm.Time = _player.GameTime;
             fm.Number = _player.Point;
             report.Load(fm);
-            Console.Clear();
-            Console.WriteLine("Дата игры: " + _player.Date + " Время игры: " + _player.GameTime + " сек Очки: " + _player.Point);
-            Console.ReadKey();
+            Screen.Display(() => Console.Clear(), "Дата игры: " + _player.Date + " Время игры: " + _player.GameTime + " сек Очки: " + _player.Point);
+            Console.ReadLine();
         }
     }
 
@@ -172,7 +161,7 @@
     internal class Player
     {
         public int Point { get; set; }
-        public int GameTime { get; set; }
+        public TimeSpan GameTime { get; set; }
         public DateTime Date  { get; set; }     
     }
 }

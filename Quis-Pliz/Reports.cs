@@ -40,7 +40,7 @@ namespace Quis_Pliz
     public class FileModel
     {
         [JsonPropertyName("time")]
-        public int Time { get; set; }
+        public TimeSpan Time { get; set; }
 
         [JsonPropertyName("numberCorrectAnswer")]
         public int Number { get; set; }
