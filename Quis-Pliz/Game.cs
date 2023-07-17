@@ -55,7 +55,8 @@
             fm.Time = _player.GameTime;
             fm.Number = _player.Point;
             _report.Load(fm);
-            Screen.ShowReport(() => Screen.Clear(), fm);
+            Screen.Clear();
+            Screen.ShowReport(fm);
         }
 
         private void Shuffle()
@@ -73,10 +74,7 @@
 
         private void Introduce()
         {
-            string text = "сыграем в КВИЗ?(Y - Да, R - рейтинг, N - выход)";
-            int x = (Screen.Width - text.Length) / 2;
-            int y = Screen.Height / 2;
-            Screen.DisplayInPosition(() => Screen.Clear(),text, x, y);
+            Screen.Greetings();
         }
 
         private void Menu()
@@ -93,11 +91,11 @@
                 }
                 else if (cki.Key == ConsoleKey.R)
                 {
-                    Console.Clear();
+                    Screen.Clear();
                     var orderedNumbers = _report.GetData().OrderByDescending(n => n.Number).Take(reportCount);
                     foreach (var number in orderedNumbers)
                     {
-                        Console.WriteLine("Очки: " + number.Number + " Время игры: " + number.Time + " секунд Дата игры: " + number.Data);
+                        Screen.ShowReport(number);
                     }
                 }
                 else if (cki.Key == ConsoleKey.N)
@@ -114,8 +112,7 @@
             CancellationTokenSource cancellation;
             for (int i = 0; i < _dataGame.Length; i++)
             {               
-                Screen.ShowQuestion(() => Screen.Clear(), _dataGame[i].question, "1 :  " + _dataGame[i].answer.A1, "2 :  " + _dataGame[i].answer.A2, 
-                    "3 :  " + _dataGame[i].answer.A3, "4 :  " + _dataGame[i].answer.A4);
+                Screen.ShowQuestion(_dataGame[i]);
                 initial = 0;
                 cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(timeQuastion));
                 _ = RepeatActionEveryAsync(() => DisplayTime(ref initial), TimeSpan.FromSeconds(1), cancellation.Token);

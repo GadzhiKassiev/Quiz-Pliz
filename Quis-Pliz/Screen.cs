@@ -10,53 +10,57 @@
             Width = Console.WindowWidth; 
             Height = Console.WindowHeight;
         }
-        public static void ShowQuestion(Action action, params string[] str)
+        public static void ShowQuestion(QuizPart questionData)
         {
-            action();
-            for(int i = 0; i < str.Length; i++)
-            {
-                Console.WriteLine(str[i]);
-            }
+            Clear();
+            Console.WriteLine(questionData.question);
+            Console.WriteLine("1 :  " + questionData.answer.A1);
+            Console.WriteLine("2 :  " + questionData.answer.A2);
+            Console.WriteLine("3 :  " + questionData.answer.A3);
+            Console.WriteLine("4 :  " + questionData.answer.A4);
         }
 
-        public static void ShowReport(Action action, FileModel fm)
+        public static void ShowReport(FileModel fm)
         {
-            action();       
             Console.WriteLine("Дата игры: " + fm.Data + " Время игры: " + fm.Time + " сек Очки: " + fm.Number);         
         }
 
-        public static void DisplayInPosition(Action action, string text, int x, int y)
+        public static void ShowInPosition(string text, int x, int y)
         {
-            if (action is not null) action();
-            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.SetCursorPosition(x, y);
-            if (text is not null) Console.WriteLine(text);
+            Console.WriteLine(text);
         }
 
-        public static void Show(string text)
+        public static void Greetings()
         {
-            Clear();
-            Console.SetCursorPosition(0, 0);
-            Console.WriteLine(text);
+            string text = "сыграем в КВИЗ?(Y - Да, R - рейтинг, N - выход)";
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            ShowInPosition(text, (Width - text.Length) / 2, Height / 2);
         }
 
         public static void ShowSuccess()
         {
-            Show("Верно");
+            Clear();
+            ShowInPosition("Верно",0,0);
         }
 
         public static void ShowNoCorrect()
         {
-            Show("Не верно");
+            Clear();
+            ShowInPosition("Не верно",0,0);
         }
+
         public static void ShowEndTime()
         {
-            Show("Время на ответ истекло");
+            Clear();
+            ShowInPosition("Время на ответ истекло",0,0);
         }
+
         public static void ShowTime(int time)
         {
-            Show(time.ToString());
+            ShowInPosition(time.ToString(), Width / 2, Height / 2);
         }
+
         public static void Clear()
         {
             Console.Clear();
