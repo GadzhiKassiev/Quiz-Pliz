@@ -2,37 +2,36 @@
 {
     internal class Reader
     {       
-        private static Thread inputThread;
-        private static AutoResetEvent getInput, gotInput;
-        private static ConsoleKeyInfo input;
+        static Thread s_inputThread;
+        static AutoResetEvent s_getInput, s_gotInput;
+        static ConsoleKeyInfo s_input;
 
         static Reader()
         {
-            getInput = new AutoResetEvent(false);
-            gotInput = new AutoResetEvent(false);
-            inputThread = new Thread(reader);
-            inputThread.IsBackground = true;
-            inputThread.Start();
+            s_getInput = new AutoResetEvent(false);
+            s_gotInput = new AutoResetEvent(false);
+            s_inputThread = new Thread(reader);
+            s_inputThread.IsBackground = true;
+            s_inputThread.Start();
+        }
+        public static string ReadLine(int timeOutMillisecs = Timeout.Infinite)
+        {
+            s_getInput.Set();
+            bool success = s_gotInput.WaitOne(timeOutMillisecs);
+            if (success)
+                return s_input.KeyChar.ToString();
+            else
+                return "";
         }
 
         private static void reader()
         {
             while (true)
             {
-                getInput.WaitOne();
-                input = Console.ReadKey();
-                gotInput.Set();
+                s_getInput.WaitOne();
+                s_input = Console.ReadKey();
+                s_gotInput.Set();
             }
-        }
-
-        public static string ReadLine(int timeOutMillisecs = Timeout.Infinite)
-        {
-            getInput.Set();
-            bool success = gotInput.WaitOne(timeOutMillisecs);
-            if (success)
-                return input.KeyChar.ToString();
-            else
-                return "";
-        }        
+        }      
     }
 }

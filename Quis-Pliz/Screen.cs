@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Quis_Pliz
+﻿namespace Quis_Pliz
 {
     internal class Screen
     {
         public static int Width { get; set; }
         public static int Height { get; set; }
 
-         static Screen()
+        static Screen()
         {
             Width = Console.WindowWidth; 
             Height = Console.WindowHeight;

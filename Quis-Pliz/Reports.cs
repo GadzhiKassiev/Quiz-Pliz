@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace Quis_Pliz
 {
@@ -35,17 +34,5 @@ namespace Quis_Pliz
 
             return data!;
         }
-    }
-
-    public class FileModel
-    {
-        [JsonPropertyName("time")]
-        public TimeSpan Time { get; set; }
-
-        [JsonPropertyName("numberCorrectAnswer")]
-        public int Number { get; set; }
-
-        [JsonPropertyName("data")]
-        public DateTime Data { get; set; }
     }
 }

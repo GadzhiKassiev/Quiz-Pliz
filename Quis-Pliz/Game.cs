@@ -2,53 +2,73 @@
 {
     internal class Game
     {
-        Player _player;
-        QuizPart[] date;
-        int Num;
-        Reports report;
+        #region Const
         const int reportCount = 4;
-        DateTime timebeginGame;
+        const int timeQuastion = 30;
+        #endregion
 
-        public Game(IFetcher fetcher , int numbers)
+        #region Fields
+        Player _player;
+        QuizPart[] _dataGame;
+        int _quationNumber;
+        Reports _report;
+        DateTime _timeBeginGame;
+        #endregion
+
+        #region ctor
+        public Game(IFetcher fetcher, int numbers)
         {
-            date = fetcher.fetchDate();
-            Num = numbers;
+            _dataGame = fetcher.fetchDate();
+            _quationNumber = numbers;
             _player = new Player();
         }
+        #endregion
+
 
         public void Initializer(string path)
         {
             if (File.Exists(path))
             {
-                report = new Reports(path);
+                _report = new Reports(path);
             }
             else
             {
                 File.Create(path);
-                report = new Reports(path);
+                _report = new Reports(path);
             }
         }
 
         public void Run()
         {
             Shuffle();
-            Num = Num > date.Length ? date.Length : Num;
-            date = date[0..Num];
+            _quationNumber = _quationNumber > _dataGame.Length ? _dataGame.Length : _quationNumber;
+            _dataGame = _dataGame[0.._quationNumber];
             Introduce();
             Menu();
             Play();
+        }
+
+        public void End()
+        {
+            FileModel fm = new FileModel();
+            fm.Data = _player.Date;
+            fm.Time = _player.GameTime;
+            fm.Number = _player.Point;
+            _report.Load(fm);
+            Screen.Display(() => Console.Clear(), "Дата игры: " + _player.Date + " Время игры: " + _player.GameTime + " сек Очки: " + _player.Point);
+            Console.ReadLine();
         }
 
         private void Shuffle()
         {
             Random rnd = new Random();
 
-            for (int i = 0; i < date.Length; i++)
+            for (int i = 0; i < _dataGame.Length; i++)
             {
                 int r = rnd.Next(0, i+1);
-                QuizPart swap = date[i];
-                date[i] = date[r];
-                date[r] = swap;
+                QuizPart swap = _dataGame[i];
+                _dataGame[i] = _dataGame[r];
+                _dataGame[r] = swap;
             }
         }
 
@@ -69,13 +89,13 @@
                 cki = Console.ReadKey();
                 if (cki.Key == ConsoleKey.Y)
                 {
-                    timebeginGame = DateTime.Now;
+                    _timeBeginGame = DateTime.Now;
                     break;
                 }
                 else if (cki.Key == ConsoleKey.R)
                 {
                     Console.Clear();
-                    var orderedNumbers = report.GetData().OrderByDescending(n => n.Number).Take(reportCount);
+                    var orderedNumbers = _report.GetData().OrderByDescending(n => n.Number).Take(reportCount);
                     foreach (var number in orderedNumbers)
                     {
                         Console.WriteLine("Очки: " + number.Number + " Время игры: " + number.Time + " секунд Дата игры: " + number.Data);
@@ -93,15 +113,16 @@
             string buttonKey;
             int initial;
             CancellationTokenSource cancellation;
-            for (int i = 0; i < date.Length; i++)
+            for (int i = 0; i < _dataGame.Length; i++)
             {               
-                Screen.Display(() => Screen.Clear(), date[i].question, "1 :  " + date[i].answer.A1, "2 :  " + date[i].answer.A2, "3 :  " + date[i].answer.A3, "4 :  " + date[i].answer.A4);
+                Screen.Display(() => Screen.Clear(), _dataGame[i].question, "1 :  " + _dataGame[i].answer.A1, "2 :  " + _dataGame[i].answer.A2, 
+                    "3 :  " + _dataGame[i].answer.A3, "4 :  " + _dataGame[i].answer.A4);
                 initial = 0;
-                cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-                _ = RepeatActionEvery(() => DisplayTime(ref initial), TimeSpan.FromSeconds(1), cancellation.Token);
-                buttonKey = Reader.ReadLine(30000);
+                cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(timeQuastion));
+                _ = RepeatActionEveryAsync(() => DisplayTime(ref initial), TimeSpan.FromSeconds(1), cancellation.Token);
+                buttonKey = Reader.ReadLine(timeQuastion * 1000);
                 cancellation.Cancel();              
-                if (buttonKey == date[i].correct)
+                if (buttonKey == _dataGame[i].correct)
                 {
                     _player.Point += 1;
                     Screen.DisplayInPosition(() => Screen.Clear(),"Верно", 0, 0);
@@ -118,7 +139,7 @@
                 Thread.Sleep(2000);
             }
             _player.Date = DateTime.Now;
-            _player.GameTime = _player.Date - timebeginGame;
+            _player.GameTime = _player.Date - _timeBeginGame;
         }
 
         private void DisplayTime(ref int time)
@@ -126,7 +147,7 @@
             Screen.DisplayInPosition(null, time++.ToString(), Console.WindowWidth / 2, Console.WindowHeight / 2);
         }
 
-        public static async Task RepeatActionEvery(Action action,
+        private static async Task RepeatActionEveryAsync(Action action,
           TimeSpan interval, CancellationToken cancellationToken)
         {
             while (true)
@@ -144,24 +165,5 @@
                 }
             }
         }
-
-        public void End()
-        {
-            FileModel fm = new FileModel();
-            fm.Data = _player.Date;
-            fm.Time = _player.GameTime;
-            fm.Number = _player.Point;
-            report.Load(fm);
-            Screen.Display(() => Console.Clear(), "Дата игры: " + _player.Date + " Время игры: " + _player.GameTime + " сек Очки: " + _player.Point);
-            Console.ReadLine();
-        }
-    }
-
-
-    internal class Player
-    {
-        public int Point { get; set; }
-        public TimeSpan GameTime { get; set; }
-        public DateTime Date  { get; set; }     
     }
 }
