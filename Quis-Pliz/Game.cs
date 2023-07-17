@@ -55,8 +55,7 @@
             fm.Time = _player.GameTime;
             fm.Number = _player.Point;
             _report.Load(fm);
-            Screen.Display(() => Console.Clear(), "Дата игры: " + _player.Date + " Время игры: " + _player.GameTime + " сек Очки: " + _player.Point);
-            Console.ReadLine();
+            Screen.ShowReport(() => Screen.Clear(), fm);
         }
 
         private void Shuffle()
@@ -115,7 +114,7 @@
             CancellationTokenSource cancellation;
             for (int i = 0; i < _dataGame.Length; i++)
             {               
-                Screen.Display(() => Screen.Clear(), _dataGame[i].question, "1 :  " + _dataGame[i].answer.A1, "2 :  " + _dataGame[i].answer.A2, 
+                Screen.ShowQuestion(() => Screen.Clear(), _dataGame[i].question, "1 :  " + _dataGame[i].answer.A1, "2 :  " + _dataGame[i].answer.A2, 
                     "3 :  " + _dataGame[i].answer.A3, "4 :  " + _dataGame[i].answer.A4);
                 initial = 0;
                 cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(timeQuastion));
@@ -144,25 +143,17 @@
 
         private void DisplayTime(ref int time)
         {
-            Screen.DisplayInPosition(null, time++.ToString(), Console.WindowWidth / 2, Console.WindowHeight / 2);
+            Screen.DisplayInPosition(null, time++.ToString(), Screen.Width / 2, Screen.Height / 2);
         }
 
-        private static async Task RepeatActionEveryAsync(Action action,
-          TimeSpan interval, CancellationToken cancellationToken)
+        private static async Task RepeatActionEveryAsync(Action action, TimeSpan interval, CancellationToken cancellationToken)
         {
             while (true)
             {
                 action();
-                Task task = Task.Delay(interval, cancellationToken);
-
-                try
-                {
-                    await task;
-                }
-                catch (TaskCanceledException)
-                {
-                    return;
-                }
+                Task task = Task.Delay(interval, cancellationToken);        
+                await task;
+                if (task.IsCanceled) return; 
             }
         }
     }

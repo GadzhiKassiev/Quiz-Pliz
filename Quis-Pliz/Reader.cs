@@ -29,6 +29,8 @@
             while (true)
             {
                 s_getInput.WaitOne();
+                while (Console.KeyAvailable)
+                    Console.ReadKey(false);
                 s_input = Console.ReadKey();
                 s_gotInput.Set();
             }

@@ -14,6 +14,7 @@ namespace Quis_Pliz
             game.Initializer(fileNameOfReport);
             game.Run();
             game.End();
+            Console.ReadLine();
         }
     }
 }

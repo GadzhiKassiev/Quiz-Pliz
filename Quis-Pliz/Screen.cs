@@ -10,13 +10,19 @@
             Width = Console.WindowWidth; 
             Height = Console.WindowHeight;
         }
-        public static void Display(Action action, params string[] str)
+        public static void ShowQuestion(Action action, params string[] str)
         {
             action();
             for(int i = 0; i < str.Length; i++)
             {
                 Console.WriteLine(str[i]);
             }
+        }
+
+        public static void ShowReport(Action action, FileModel fm)
+        {
+            action();       
+            Console.WriteLine("Дата игры: " + fm.Data + " Время игры: " + fm.Time + " сек Очки: " + fm.Number);         
         }
 
         public static void DisplayInPosition(Action action, string text, int x, int y)
