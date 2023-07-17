@@ -33,6 +33,30 @@
             if (text is not null) Console.WriteLine(text);
         }
 
+        public static void Show(string text)
+        {
+            Clear();
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine(text);
+        }
+
+        public static void ShowSuccess()
+        {
+            Show("Верно");
+        }
+
+        public static void ShowNoCorrect()
+        {
+            Show("Не верно");
+        }
+        public static void ShowEndTime()
+        {
+            Show("Время на ответ истекло");
+        }
+        public static void ShowTime(int time)
+        {
+            Show(time.ToString());
+        }
         public static void Clear()
         {
             Console.Clear();

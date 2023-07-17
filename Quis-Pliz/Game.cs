@@ -124,16 +124,16 @@
                 if (buttonKey == _dataGame[i].correct)
                 {
                     _player.Point += 1;
-                    Screen.DisplayInPosition(() => Screen.Clear(),"Верно", 0, 0);
+                    Screen.ShowSuccess();
                 }
                 else if  (buttonKey == "")
                 {
-                    Screen.DisplayInPosition(() => Screen.Clear(),"Время на ответ истекло", 0, 0);
+                    Screen.ShowEndTime();
                 }
                 else
                 {
                     _player.Point -= 1;
-                    Screen.DisplayInPosition(() => Screen.Clear(),"Не верно", 0, 0);
+                    Screen.ShowNoCorrect();
                 }
                 Thread.Sleep(2000);
             }
@@ -143,7 +143,7 @@
 
         private void DisplayTime(ref int time)
         {
-            Screen.DisplayInPosition(null, time++.ToString(), Screen.Width / 2, Screen.Height / 2);
+            Screen.ShowTime(time++);
         }
 
         private static async Task RepeatActionEveryAsync(Action action, TimeSpan interval, CancellationToken cancellationToken)
