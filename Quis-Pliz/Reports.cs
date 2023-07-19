@@ -22,7 +22,12 @@ namespace Quis_Pliz
             File.WriteAllText(filepath, json);
         }
 
-        public List<FileModel> GetData()
+        public IEnumerable<FileModel> SelectData(int dataNum)
+        {
+            return GetData().OrderByDescending(n => n.Number).Take(dataNum);
+        }
+
+        private List<FileModel> GetData()
         {
             List<FileModel> data = new List<FileModel>();
 

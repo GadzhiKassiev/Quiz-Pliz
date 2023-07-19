@@ -24,18 +24,13 @@
         }
         #endregion
 
-
         public void Initializer(string path)
         {
-            if (File.Exists(path))
-            {
-                _report = new Reports(path);
-            }
-            else
+            if (!File.Exists(path))
             {
                 File.Create(path);
-                _report = new Reports(path);
             }
+            _report = new Reports(path);
         }
 
         public void Run()
@@ -44,7 +39,7 @@
             _quationNumber = _quationNumber > _dataGame.Length ? _dataGame.Length : _quationNumber;
             _dataGame = _dataGame[0.._quationNumber];
             Introduce();
-            Menu();
+            ChooseOption();
             Play();
         }
 
@@ -77,7 +72,7 @@
             Screen.Greetings();
         }
 
-        private void Menu()
+        private void ChooseOption()
         {
             ConsoleKeyInfo cki;
 
@@ -92,8 +87,7 @@
                 else if (cki.Key == ConsoleKey.R)
                 {
                     Screen.Clear();
-                    var orderedNumbers = _report.GetData().OrderByDescending(n => n.Number).Take(reportCount);
-                    foreach (var number in orderedNumbers)
+                    foreach (var number in _report.SelectData(reportCount))
                     {
                         Screen.ShowReport(number);
                     }

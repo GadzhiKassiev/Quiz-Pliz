@@ -16,7 +16,7 @@ namespace Quis_Pliz
         {
             _count = 0;
             _timer = new System.Timers.Timer(1000);
-            _timerThread = new Thread(Timing);
+            _timerThread = new Thread(ElapseHookup);
             _timerThread.IsBackground = true;
             _timerThread?.Start();
         }
@@ -32,12 +32,12 @@ namespace Quis_Pliz
             _count = 0;
         }
 
-        private void Timing()
+        private void ElapseHookup()
         {
-            _timer.Elapsed += Timer_Elapsed;
+            _timer.Elapsed += HandleTimerElapsed;
         }
 
-        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        private void HandleTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             Screen.ShowTime(_count++);
         }
