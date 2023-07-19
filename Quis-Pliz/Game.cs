@@ -108,16 +108,13 @@
         private void Play()
         {
             string buttonKey;
-            int initial;
-            CancellationTokenSource cancellation;
+            GameTimer timer = new GameTimer();
             for (int i = 0; i < _dataGame.Length; i++)
             {               
                 Screen.ShowQuestion(_dataGame[i]);
-                initial = 0;
-                cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(timeQuastion));
-                _ = RepeatActionEveryAsync(() => DisplayTime(ref initial), TimeSpan.FromSeconds(1), cancellation.Token);
+                timer.Start();
                 buttonKey = Reader.ReadLine(timeQuastion * 1000);
-                cancellation.Cancel();              
+                timer.Stop();
                 if (buttonKey == _dataGame[i].correct)
                 {
                     _player.Point += 1;
@@ -136,22 +133,6 @@
             }
             _player.Date = DateTime.Now;
             _player.GameTime = _player.Date - _timeBeginGame;
-        }
-
-        private void DisplayTime(ref int time)
-        {
-            Screen.ShowTime(time++);
-        }
-
-        private static async Task RepeatActionEveryAsync(Action action, TimeSpan interval, CancellationToken cancellationToken)
-        {
-            while (true)
-            {
-                action();
-                Task task = Task.Delay(interval, cancellationToken);        
-                await task;
-                if (task.IsCanceled) return; 
-            }
         }
     }
 }
