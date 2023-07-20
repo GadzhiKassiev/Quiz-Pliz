@@ -20,9 +20,13 @@
             Console.WriteLine("4 :  " + questionData.answer.A4);
         }
 
-        public static void ShowReport(FileModel fm)
+        public static void ShowReport(IEnumerable<Reports> fm)
         {
-            Console.WriteLine("Дата игры: " + fm.Data + " Время игры: " + fm.Time + " сек Очки: " + fm.Number);         
+            Clear();
+            foreach (var fmItem in fm)
+            {
+                Console.WriteLine("Дата игры: " + fmItem.Data + " Время игры: " + fmItem.Time + " сек Очки: " + fmItem.Number);         
+            }
         }
 
         public static void ShowInPosition(string text, int x, int y)

@@ -11,7 +11,7 @@
         Player _player;
         QuizPart[] _dataGame;
         int _quationNumber;
-        Reports _report;
+        ReportManager _report;
         DateTime _timeBeginGame;
         #endregion
 
@@ -30,7 +30,7 @@
             {
                 File.Create(path);
             }
-            _report = new Reports(path);
+            _report = new ReportManager(path);
         }
 
         public void Run()
@@ -45,13 +45,12 @@
 
         public void End()
         {
-            FileModel fm = new FileModel();
+            Reports fm = new Reports();
             fm.Data = _player.Date;
             fm.Time = _player.GameTime;
             fm.Number = _player.Point;
             _report.Load(fm);
-            Screen.Clear();
-            Screen.ShowReport(fm);
+            Screen.ShowReport(new List<Reports>() {fm});
         }
 
         private void Shuffle()
@@ -86,11 +85,7 @@
                 }
                 else if (cki.Key == ConsoleKey.R)
                 {
-                    Screen.Clear();
-                    foreach (var number in _report.SelectData(reportCount))
-                    {
-                        Screen.ShowReport(number);
-                    }
+                    Screen.ShowReport(_report.SelectData(reportCount));
                 }
                 else if (cki.Key == ConsoleKey.N)
                 {
