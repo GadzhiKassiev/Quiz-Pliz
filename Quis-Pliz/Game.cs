@@ -16,28 +16,23 @@
         #endregion
 
         #region ctor
-        public Game(IFetcher fetcher, int numbers)
+        public Game(int numbers)
         {
-            _dataGame = fetcher.fetchDate();
             _quationNumber = numbers;
             _player = new Player();
         }
         #endregion
 
-        public void Initializer(string path)
+        public void Initializer(IFetcher fetcher, string path)
         {
-            if (!File.Exists(path))
-            {
-                File.Create(path);
-            }
+            _dataGame = fetcher.fetchDate();
             _report = new ReportManager(path);
         }
 
         public void Run()
         {
             Shuffle();
-            _quationNumber = _quationNumber > _dataGame.Length ? _dataGame.Length : _quationNumber;
-            _dataGame = _dataGame[0.._quationNumber];
+            DataRestrict();
             Introduce();
             ChooseOption();
             Play();
@@ -64,6 +59,12 @@
                 _dataGame[i] = _dataGame[r];
                 _dataGame[r] = swap;
             }
+        }
+
+        private void DataRestrict()
+        {
+            _quationNumber = _quationNumber > _dataGame.Length ? _dataGame.Length : _quationNumber;
+            _dataGame = _dataGame[0.._quationNumber];
         }
 
         private void Introduce()

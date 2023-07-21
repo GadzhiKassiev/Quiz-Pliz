@@ -9,9 +9,11 @@ namespace Quis_Pliz
         const string fileNameOfReport = "report.txt";
         static void Main(string[] args)
         {
-            IFetcher jf = new JSONFetcher(fileNameOfDate);        
-            Game game = new Game(jf, N);
-            game.Initializer(fileNameOfReport);
+            IFetcher jf = new JSONFetcher(fileNameOfDate);
+            FileManager fm = new FileManager();
+            fm.CreateIfNotExist(fileNameOfReport);
+            Game game = new Game(N);
+            game.Initializer(jf, fileNameOfReport);
             game.Run();
             game.End();
             Console.ReadLine();
