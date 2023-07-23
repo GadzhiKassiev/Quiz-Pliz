@@ -4,13 +4,13 @@
     {
         #region Const
         const int reportCount = 4;
-        const int timeQuastion = 30;
+        const int timeQuestion = 30;
         #endregion
 
         #region Fields
         Player _player;
         QuizPart[] _dataGame;
-        int _quationNumber;
+        int _questionNumber;
         ReportManager _report;
         DateTime _timeBeginGame;
         #endregion
@@ -18,15 +18,15 @@
         #region ctor
         public Game(int numbers)
         {
-            _quationNumber = numbers;
+            _questionNumber = numbers;
             _player = new Player();
         }
         #endregion
 
-        public void Initializer(IFetcher fetcher, string path)
+        public void Initializer(QuizPart[] data, ReportManager rm)
         {
-            _dataGame = fetcher.fetchDate();
-            _report = new ReportManager(path);
+            _dataGame = data;
+            _report = rm;
         }
 
         public void Run()
@@ -63,8 +63,8 @@
 
         private void DataRestrict()
         {
-            _quationNumber = _quationNumber > _dataGame.Length ? _dataGame.Length : _quationNumber;
-            _dataGame = _dataGame[0.._quationNumber];
+            _questionNumber = _questionNumber > _dataGame.Length ? _dataGame.Length : _questionNumber;
+            _dataGame = _dataGame[0.._questionNumber];
         }
 
         private void Introduce()
@@ -103,7 +103,7 @@
             {               
                 Screen.ShowQuestion(_dataGame[i]);
                 timer.Start();
-                buttonKey = Reader.ReadLine(timeQuastion * 1000);
+                buttonKey = Reader.ReadLine(timeQuestion * 1000);
                 timer.Stop();
                 if (buttonKey == _dataGame[i].correct)
                 {

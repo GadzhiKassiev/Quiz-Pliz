@@ -30,7 +30,7 @@
             {
                 s_getInput.WaitOne();
                 while (Console.KeyAvailable)
-                    Console.ReadKey(false);
+                    Console.ReadKey(true);
                 s_input = Console.ReadKey();
                 s_gotInput.Set();
             }

@@ -10,6 +10,10 @@ namespace Quis_Pliz
         public ReportManager(string path)
         {
             filepath = path;
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+            }
         }
 
         public void Load(Reports date)

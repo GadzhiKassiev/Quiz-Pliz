@@ -10,10 +10,9 @@ namespace Quis_Pliz
         static void Main(string[] args)
         {
             IFetcher jf = new JSONFetcher(fileNameOfDate);
-            FileManager fm = new FileManager();
-            fm.CreateIfNotExist(fileNameOfReport);
             Game game = new Game(N);
-            game.Initializer(jf, fileNameOfReport);
+            ReportManager rm = new ReportManager(fileNameOfReport);
+            game.Initializer(jf.fetchDate(), rm);
             game.Run();
             game.End();
             Console.ReadLine();
