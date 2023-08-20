@@ -4,12 +4,12 @@
     {
         #region Const
         const int reportCount = 4;
-        const int timeQuestion = 30;
         #endregion
 
         #region Fields
-        Player _player;
-        QuizPart[] _dataGame;
+        GameStateMachine _gameStateMachine;
+        public Player Player { get; set; }
+        public Stack<QuizPart> DataGame { get; set; }
         int _questionNumber;
         ReportManager _report;
         DateTime _timeBeginGame;
@@ -19,20 +19,21 @@
         public Game(int numbers)
         {
             _questionNumber = numbers;
-            _player = new Player();
+            Player = new Player();
+            _gameStateMachine = new GameStateMachine(this);
         }
         #endregion
 
         public void Initializer(QuizPart[] data, ReportManager rm)
         {
-            _dataGame = data;
+            QuizPart[] qp = Shuffle(data);
+            qp = DataRestrict(qp);
+            DataGame = new Stack<QuizPart>(qp);
             _report = rm;
         }
 
         public void Run()
         {
-            Shuffle();
-            DataRestrict();
             Introduce();
             ChooseOption();
             Play();
@@ -41,30 +42,31 @@
         public void End()
         {
             Reports fm = new Reports();
-            fm.Data = _player.Date;
-            fm.Time = _player.GameTime;
-            fm.Number = _player.Point;
+            fm.Data = Player.Date;
+            fm.Time = Player.GameTime;
+            fm.Number = Player.Point;
             _report.Load(fm);
             Screen.ShowReport(new List<Reports>() {fm});
         }
 
-        private void Shuffle()
+        private QuizPart[] Shuffle(QuizPart[] qp)
         {
             Random rnd = new Random();
 
-            for (int i = 0; i < _dataGame.Length; i++)
+            for (int i = 0; i < qp.Length; i++)
             {
                 int r = rnd.Next(0, i+1);
-                QuizPart swap = _dataGame[i];
-                _dataGame[i] = _dataGame[r];
-                _dataGame[r] = swap;
+                QuizPart swap = qp[i];
+                qp[i] = qp[r];
+                qp[r] = swap;
             }
+            return qp;
         }
 
-        private void DataRestrict()
+        private QuizPart[] DataRestrict(QuizPart[] qp)
         {
-            _questionNumber = _questionNumber > _dataGame.Length ? _dataGame.Length : _questionNumber;
-            _dataGame = _dataGame[0.._questionNumber];
+            _questionNumber = _questionNumber > qp.Length ? qp.Length : _questionNumber;
+            return qp[0.._questionNumber];
         }
 
         private void Introduce()
@@ -97,32 +99,9 @@
 
         private void Play()
         {
-            string buttonKey;
-            GameTimer timer = new GameTimer();
-            for (int i = 0; i < _dataGame.Length; i++)
-            {               
-                Screen.ShowQuestion(_dataGame[i]);
-                timer.Start();
-                buttonKey = Reader.ReadLine(timeQuestion * 1000);
-                timer.Stop();
-                if (buttonKey == _dataGame[i].correct)
-                {
-                    _player.Point += 1;
-                    Screen.ShowSuccess();
-                }
-                else if  (buttonKey == "")
-                {
-                    Screen.ShowEndTime();
-                }
-                else
-                {
-                    _player.Point -= 1;
-                    Screen.ShowNoCorrect();
-                }
-                Thread.Sleep(2000);
-            }
-            _player.Date = DateTime.Now;
-            _player.GameTime = _player.Date - _timeBeginGame;
+            _gameStateMachine.Launch();
+            Player.Date = DateTime.Now;
+            Player.GameTime = Player.Date - _timeBeginGame;
         }
     }
 }

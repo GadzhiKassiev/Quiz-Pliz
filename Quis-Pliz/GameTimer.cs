@@ -12,6 +12,14 @@ namespace Quis_Pliz
         System.Timers.Timer _timer;
         int _count;
 
+        public int CurrentCount
+        {
+            get
+            {
+                return _count;    
+            }
+        }
+
         public GameTimer()
         {
             _count = 0;
@@ -31,7 +39,7 @@ namespace Quis_Pliz
             _timer.Stop();
             _count = 0;
         }
-
+     
         private void ElapseHookup()
         {
             _timer.Elapsed += HandleTimerElapsed;

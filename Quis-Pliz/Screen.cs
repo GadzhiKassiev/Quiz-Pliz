@@ -48,6 +48,12 @@
             ShowInPosition("Верно",0,0);
         }
 
+        public static void ShowNoCorrectButton()
+        {
+            string text = "Выберите верную кнопку(1,2,3 или 4)";
+            ShowInPosition(text, Width - text.Length, 0);
+        }
+        
         public static void ShowNoCorrect()
         {
             Clear();
