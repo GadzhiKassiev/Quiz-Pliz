@@ -6,19 +6,13 @@
         protected string buttonPattern = "1234";
         protected GameStateMachine gameStateMachine;
 
+        protected Player GetPlayer { get { return gameStateMachine.Player; } }
+        protected Stack<QuizPart> GetDate { get { return gameStateMachine.DataGame; } }
+
         public GameTimer GameTimer { get; set; }
         public QuizPart QuizPart { get; set; }
 
-        abstract public void handle();
+        abstract public void Handle();
 
-        protected Player GetPlayer()
-        {
-            return gameStateMachine.Player();
-        }
-
-        protected Stack<QuizPart> GetDate()
-        {
-            return gameStateMachine.DataGame();
-        }
     }
 }

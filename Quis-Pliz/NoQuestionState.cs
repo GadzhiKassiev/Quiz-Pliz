@@ -13,7 +13,7 @@ namespace Quis_Pliz
         {
             gameStateMachine = gsm;
         }
-        public override void handle()
+        public override void Handle()
         {
             throw new NotImplementedException();
         }

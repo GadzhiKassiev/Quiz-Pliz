@@ -6,13 +6,13 @@
         {
             gameStateMachine = gsm;
         }
-        public override void handle()
+        public override void Handle()
         {
             string buttonKey = Reader.ReadLine((timeQuestion - GameTimer.CurrentCount) * 1000);
             if (buttonKey == QuizPart.correct)
             {
                 GameTimer.Stop();
-                GetPlayer().Point += 1;
+                GetPlayer.Point += 1;
                 Screen.ShowSuccess();
             }
             else if (buttonKey == "")
@@ -29,11 +29,11 @@
             else
             {
                 GameTimer.Stop();
-                GetPlayer().Point -= 1;
+                GetPlayer.Point -= 1;
                 Screen.ShowNoCorrect();
             }
             Thread.Sleep(2000);
-            if (GetDate().Count <= 0)
+            if (GetDate.Count <= 0)
             {
                 gameStateMachine.setState(gameStateMachine.getNoQuestionState());
             }

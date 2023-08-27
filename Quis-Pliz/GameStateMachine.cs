@@ -7,6 +7,10 @@
         State _repeadQuestionState;
         State _noQuestionState;
         State _state;
+
+        public Player Player { get { return _game.Player; } }
+        public Stack<QuizPart> DataGame { get { return _game.DataGame; } }
+
         public GameStateMachine(Game g)
         {
             _game = g;
@@ -20,7 +24,7 @@
         {
             while(_state != _noQuestionState)
             {
-                _state.handle();
+                _state.Handle();
             }
         }
 
@@ -44,16 +48,6 @@
         public State getNoQuestionState()
         {
             return _noQuestionState;
-        }
-
-        public Player Player()
-        {
-            return _game.Player;
-        }
-
-        public Stack<QuizPart> DataGame()
-        {
-            return _game.DataGame;
         }
     }
 }
